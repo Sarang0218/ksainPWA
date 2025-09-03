@@ -31,14 +31,14 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = ""1340054141"";
+    const serviceWorkerVersion = ""1707721443"";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter_bootstrap.js" async></script>
 
-  <!-- Firebase SDK (v10 - Latest 2025) -->
-  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
 
   <style>
     /* Loading screen styles */
@@ -162,83 +162,57 @@
       installButton.style.display = 'none';
     });
 
-    // Initialize Firebase for web notifications (v10+ 2025)
-    async function initFirebase() {
-      const firebaseConfig = {
-        apiKey: "AIzaSyByXVeGaHRyIUSnnAbvRYSCIgU60aON5mU",
-        authDomain: "ksain-gaonuri.firebaseapp.com",
-        projectId: "ksain-gaonuri",
-        storageBucket: "ksain-gaonuri.firebasestorage.app",
-        messagingSenderId: "1070324804834",
-        appId: "1:1070324804834:web:884d0fe2a5b4300fca42bb",
-        measurementId: "G-GCGNRRHCV7"
-      };
+    // Initialize Firebase for web notifications
+    const firebaseConfig = {
+      apiKey: "AIzaSyByXVeGaHRyIUSnnAbvRYSCIgU60aON5mU",
+      authDomain: "ksain-gaonuri.firebaseapp.com",
+      projectId: "ksain-gaonuri",
+      storageBucket: "ksain-gaonuri.firebasestorage.app",
+      messagingSenderId: "1070324804834",
+      appId: "1:1070324804834:web:884d0fe2a5b4300fca42bb",
+      measurementId: "G-GCGNRRHCV7"
+    };
 
-      try {
-        // Use dynamic imports with modern Firebase v10
-        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js');
-        const { getMessaging, getToken, onMessage, isSupported } = await import('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js');
-
-        const app = initializeApp(firebaseConfig);
+    try {
+      if (typeof firebase !== 'undefined' && firebase?.apps?.length === 0) {
+        firebase.initializeApp(firebaseConfig);
         
-        // Check if messaging is supported
-        const messagingSupported = await isSupported();
-        if (messagingSupported) {
-          const messaging = getMessaging(app);
+        // Initialize Firebase Messaging
+        if (firebase.messaging.isSupported()) {
+          const messaging = firebase.messaging();
           
-          // Request notification permission and get token
-          try {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-              console.log('🔔 Notification permission granted');
-              
-              // Get FCM token (VAPID key can be added later from Firebase Console)
-              const token = await getToken(messaging);
-              console.log('🔥 FCM Token:', token);
-              
-              // Send token to your Flutter app when it loads
-              window.fcmToken = token;
-              
-              // Handle foreground messages
-              onMessage(messaging, (payload) => {
-                console.log('📱 Foreground message received:', payload);
-                
-                // Show browser notification with modern API
-                if (Notification.permission === 'granted') {
-                  const notificationOptions = {
-                    body: payload.notification?.body,
-                    icon: '/icons/Icon-192.png',
-                    badge: '/icons/badge-72x72.png',
-                    tag: payload.data?.type || 'default',
-                    data: payload.data,
-                    requireInteraction: true,
-                    actions: [
-                      {
-                        action: 'open',
-                        title: '열기'
-                      }
-                    ]
-                  };
-                  
-                  new Notification(payload.notification?.title || '가온누리 알림', notificationOptions);
-                }
-              });
-            } else {
-              console.log('⚠️ Notification permission denied');
-            }
-          } catch (tokenError) {
-            console.log('⚠️ Unable to get permission or token:', tokenError);
-          }
-        } else {
-          console.log('⚠️ Messaging not supported on this browser');
-        }
-      } catch (error) {
-        console.log('❌ Firebase initialization error:', error);
-      }
-    }
+          // Request notification permission
+          messaging.requestPermission().then(() => {
+            console.log('Notification permission granted');
+            return messaging.getToken();
+          }).then((token) => {
+            console.log('FCM Token:', token);
+            // Send token to your Flutter app when it loads
+            window.fcmToken = token;
+          }).catch((err) => {
+            console.log('Unable to get permission or token:', err);
+          });
 
-    // Initialize Firebase when page loads
-    initFirebase();
+          // Handle foreground messages
+          messaging.onMessage((payload) => {
+            console.log('Foreground message received:', payload);
+            
+            // Show browser notification
+            if (Notification.permission === 'granted') {
+              new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: '/icons/Icon-192.png',
+                badge: '/icons/badge-72x72.png',
+                tag: payload.data?.type || 'default',
+                data: payload.data
+              });
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.log('Firebase initialization error:', error);
+    }
 
     // Service Worker Registration  
     if ('serviceWorker' in navigator) {
