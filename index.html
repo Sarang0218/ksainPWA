@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!--
+    The "flutter bootstrap" javascript loads the user's flutter app. This script
+    is defined in web/_flutter_bootstrap.js.  
+  -->
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="한국과학영재학교 가온누리 모바일 버전 (미리보기)">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="KSAin">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Android meta tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1976d2">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <title>한국과학영재학교 가온누리 모바일 버전 (미리보기)</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = "3268954887";
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter_bootstrap.js" async></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+
+  <style>
+    /* Loading screen styles */
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #1976d2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .loading-logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+    }
+    
+    .loading-text {
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .loading-subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Hide loading screen when Flutter loads */
+    body.flutter-loaded .loading-container {
+      display: none;
+    }
+
+    /* PWA Install Button */
+    .install-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+      display: none;
+      z-index: 1000;
+    }
+
+    .install-button:hover {
+      background: #1565c0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-container">
+    <img src="icons/Icon-192.png" alt="KSAin Logo" class="loading-logo">
+    <div class="loading-text">가온누리</div>
+    <div class="loading-subtitle">한국과학영재학교 모바일 버전 (미리보기)</div>
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- PWA Install Button -->
+  <button id="install-button" class="install-button">
+    📱 앱으로 설치하기
+  </button>
+
+  <script>
+    // PWA Install functionality
+    let deferredPrompt;
+    const installButton = document.getElementById('install-button');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('PWA install prompt triggered');
+      e.preventDefault();
+      deferredPrompt = e;
+      installButton.style.display = 'block';
+    });
+
+    installButton.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`PWA install outcome: ${outcome}`);
+        deferredPrompt = null;
+        installButton.style.display = 'none';
+      }
+    });
+
+    window.addEventListener('appinstalled', (e) => {
+      console.log('PWA installed successfully');
+      installButton.style.display = 'none';
+    });
+
+    // Initialize Firebase for web notifications
+    const firebaseConfig = {
+      apiKey: "AIzaSyByXVeGaHRyIUSnnAbvRYSCIgU60aON5mU",
+      authDomain: "ksain-gaonuri.firebaseapp.com",
+      projectId: "ksain-gaonuri",
+      storageBucket: "ksain-gaonuri.firebasestorage.app",
+      messagingSenderId: "1070324804834",
+      appId: "1:1070324804834:web:884d0fe2a5b4300fca42bb",
+      measurementId: "G-GCGNRRHCV7"
+    };
+
+    try {
+      if (typeof firebase !== 'undefined' && firebase?.apps?.length === 0) {
+        firebase.initializeApp(firebaseConfig);
+        
+        // Initialize Firebase Messaging
+        if (firebase.messaging.isSupported()) {
+          const messaging = firebase.messaging();
+          
+          // Request notification permission
+          messaging.requestPermission().then(() => {
+            console.log('Notification permission granted');
+            return messaging.getToken();
+          }).then((token) => {
+            console.log('FCM Token:', token);
+            // Send token to your Flutter app when it loads
+            window.fcmToken = token;
+          }).catch((err) => {
+            console.log('Unable to get permission or token:', err);
+          });
+
+          // Handle foreground messages
+          messaging.onMessage((payload) => {
+            console.log('Foreground message received:', payload);
+            
+            // Show browser notification
+            if (Notification.permission === 'granted') {
+              new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: '/icons/Icon-192.png',
+                badge: '/icons/badge-72x72.png',
+                tag: payload.data?.type || 'default',
+                data: payload.data
+              });
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.log('Firebase initialization error:', error);
+    }
+
+    // Service Worker Registration  
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered:', registration);
+        })
+        .catch((error) => {
+          console.log('Service Worker registration failed (not critical):', error);
+        });
+    }
+
+    // Ensure Flutter app loads even if Firebase fails
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.body.classList.add('flutter-loaded');
+      }, 3000); // Force show app after 3 seconds
+    });
+
+    // Debug Flutter loading
+    window.addEventListener('flutter-first-frame', () => {
+      console.log('Flutter first frame rendered');
+      document.body.classList.add('flutter-loaded');
+    });
+
+    // Add error logging
+    window.addEventListener('error', (e) => {
+      console.error('JavaScript error:', e.error);
+    });
+
+    // Check Flutter engine initialization
+    window.addEventListener('load', () => {
+      console.log('Window loaded, checking Flutter...');
+      setTimeout(() => {
+        if (!window._flutter) {
+          console.error('Flutter engine not initialized after 3 seconds');
+        }
+        document.body.classList.add('flutter-loaded');
+      }, 3000);
+    });
+
+    // Final fallback
+    setTimeout(() => {
+      console.log('Final fallback: removing loading screen');
+      document.body.classList.add('flutter-loaded');
+    }, 5000);
+  </script>
+</body>
+</html>
