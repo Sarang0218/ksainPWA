@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .error { background: #ffebee; border-color: #f44336; }
+        .success { background: #e8f5e8; border-color: #4caf50; }
+    </style>
+</head>
+<body>
+    <h1>🐛 Flutter Web Debug Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        function addResult(message, type = 'status') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+        
+        // Test 1: Check if main.dart.js exists
+        fetch('main.dart.js', {method: 'HEAD'})
+            .then(response => {
+                if (response.ok) {
+                    addResult('✅ main.dart.js file exists and is accessible', 'success');
+                    return response.headers.get('content-length');
+                } else {
+                    addResult('❌ main.dart.js file not found or not accessible', 'error');
+                }
+            })
+            .then(size => {
+                if (size) {
+                    addResult(`📊 main.dart.js size: ${size} bytes`, 'success');
+                }
+            })
+            .catch(error => {
+                addResult(`❌ Error loading main.dart.js: ${error.message}`, 'error');
+            });
+            
+        // Test 2: Check if flutter_bootstrap.js exists
+        fetch('flutter_bootstrap.js', {method: 'HEAD'})
+            .then(response => {
+                if (response.ok) {
+                    addResult('✅ flutter_bootstrap.js exists', 'success');
+                } else {
+                    addResult('❌ flutter_bootstrap.js not found', 'error');
+                }
+            })
+            .catch(error => {
+                addResult(`❌ Error loading flutter_bootstrap.js: ${error.message}`, 'error');
+            });
+            
+        // Test 3: Check manifest.json
+        fetch('manifest.json')
+            .then(response => response.json())
+            .then(manifest => {
+                addResult('✅ manifest.json loaded successfully', 'success');
+                addResult(`📱 App name: ${manifest.name}`, 'status');
+            })
+            .catch(error => {
+                addResult(`❌ Error loading manifest.json: ${error.message}`, 'error');
+            });
+            
+        // Test 4: Check service worker
+        fetch('flutter_service_worker.js', {method: 'HEAD'})
+            .then(response => {
+                if (response.ok) {
+                    addResult('✅ flutter_service_worker.js exists', 'success');
+                } else {
+                    addResult('❌ flutter_service_worker.js not found', 'error');
+                }
+            })
+            .catch(error => {
+                addResult(`❌ Error loading service worker: ${error.message}`, 'error');
+            });
+            
+        // Test 5: Try to load Flutter engine
+        setTimeout(() => {
+            if (window._flutter) {
+                addResult('✅ Flutter engine detected', 'success');
+            } else {
+                addResult('❌ Flutter engine not initialized', 'error');
+            }
+        }, 5000);
+        
+        // Test 6: Console error logging
+        window.addEventListener('error', (e) => {
+            addResult(`💥 JavaScript Error: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
+        });
+        
+        addResult('🔍 Running diagnostic tests...', 'status');
+    </script>
+</body>
+</html>
