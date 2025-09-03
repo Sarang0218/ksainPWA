@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Flutter Console Test</title>
+</head>
+<body>
+    <h1>🔍 Flutter Console Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            const div = document.createElement('div');
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            results.appendChild(div);
+        }
+        
+        // Check if main.dart.js loads and executes
+        log('Testing main.dart.js execution...');
+        
+        // Override console methods to capture Flutter logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            log('LOG: ' + args.join(' '));
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            log('ERROR: ' + args.join(' '));
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            log('WARN: ' + args.join(' '));
+            originalWarn.apply(console, args);
+        };
+        
+        // Check Flutter loading
+        log('Loading main.dart.js directly...');
+        
+        const script = document.createElement('script');
+        script.src = 'main.dart.js';
+        script.onload = () => {
+            log('✅ main.dart.js loaded successfully');
+            setTimeout(() => {
+                if (window._flutter) {
+                    log('✅ Flutter engine found: ' + JSON.stringify(Object.keys(window._flutter)));
+                } else {
+                    log('❌ Flutter engine not found');
+                }
+            }, 2000);
+        };
+        script.onerror = (e) => {
+            log('❌ main.dart.js failed to load: ' + e.message);
+        };
+        
+        document.head.appendChild(script);
+        
+        // Check for any uncaught errors
+        window.addEventListener('error', (e) => {
+            log('🚨 UNCAUGHT ERROR: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+        });
+        
+        log('Console test initialized. Check results above...');
+    </script>
+</body>
+</html>

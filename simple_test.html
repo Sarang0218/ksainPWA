@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <title>Simple Flutter Test</title>
+    <script>
+        const serviceWorkerVersion = "2830235198";
+    </script>
+</head>
+<body>
+    <h1>Simple Flutter Test</h1>
+    <div id="status">Loading...</div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        function updateStatus(msg) {
+            status.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + msg;
+            console.log(msg);
+        }
+        
+        updateStatus('Starting test...');
+        
+        // Step 1: Load flutter bootstrap
+        updateStatus('Loading flutter_bootstrap.js...');
+        const bootstrapScript = document.createElement('script');
+        bootstrapScript.src = 'flutter_bootstrap.js';
+        bootstrapScript.onload = () => {
+            updateStatus('✅ flutter_bootstrap.js loaded');
+            
+            setTimeout(() => {
+                if (window._flutter) {
+                    updateStatus('✅ Flutter engine found');
+                    if (window._flutter.loader) {
+                        updateStatus('✅ Flutter loader found');
+                    } else {
+                        updateStatus('❌ Flutter loader not found');
+                    }
+                } else {
+                    updateStatus('❌ Flutter engine not found');
+                }
+            }, 2000);
+        };
+        bootstrapScript.onerror = (e) => {
+            updateStatus('❌ Failed to load flutter_bootstrap.js');
+        };
+        
+        document.head.appendChild(bootstrapScript);
+        
+        // Log any errors
+        window.addEventListener('error', (e) => {
+            updateStatus('🚨 ERROR: ' + e.message);
+        });
+    </script>
+</body>
+</html>

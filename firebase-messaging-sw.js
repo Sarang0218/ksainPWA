@@ -1,6 +1,6 @@
-// Import Firebase scripts for service worker
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
+// Import Firebase scripts for service worker (v10+ 2025)
+importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js');
 
 // Firebase configuration
 const firebaseConfig = {
@@ -16,7 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase in service worker
 firebase.initializeApp(firebaseConfig);
 
-// Get messaging instance
+// Get messaging instance  
 const messaging = firebase.messaging();
 
 // Handle background messages
