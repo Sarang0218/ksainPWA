@@ -32,7 +32,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = ""2361826899"";
+    const serviceWorkerVersion = ""3276838960"";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter_bootstrap.js" async></script>
@@ -193,57 +193,9 @@
       installButton.style.display = 'none';
     });
 
-    // Initialize Firebase for web notifications
-    const firebaseConfig = {
-      apiKey: "AIzaSyByXVeGaHRyIUSnnAbvRYSCIgU60aON5mU",
-      authDomain: "ksain-gaonuri.firebaseapp.com",
-      projectId: "ksain-gaonuri",
-      storageBucket: "ksain-gaonuri.firebasestorage.app",
-      messagingSenderId: "1070324804834",
-      appId: "1:1070324804834:web:884d0fe2a5b4300fca42bb",
-      measurementId: "G-GCGNRRHCV7"
-    };
-
-    try {
-      if (typeof firebase !== 'undefined' && firebase?.apps?.length === 0) {
-        firebase.initializeApp(firebaseConfig);
-        
-        // Initialize Firebase Messaging
-        if (firebase.messaging.isSupported()) {
-          const messaging = firebase.messaging();
-          
-          // Request notification permission
-          messaging.requestPermission().then(() => {
-            console.log('Notification permission granted');
-            return messaging.getToken();
-          }).then((token) => {
-            console.log('FCM Token:', token);
-            // Send token to your Flutter app when it loads
-            window.fcmToken = token;
-          }).catch((err) => {
-            console.log('Unable to get permission or token:', err);
-          });
-
-          // Handle foreground messages
-          messaging.onMessage((payload) => {
-            console.log('Foreground message received:', payload);
-            
-            // Show browser notification
-            if (Notification.permission === 'granted') {
-              new Notification(payload.notification.title, {
-                body: payload.notification.body,
-                icon: '/icons/Icon-192.png',
-                badge: '/icons/badge-72x72.png',
-                tag: payload.data?.type || 'default',
-                data: payload.data
-              });
-            }
-          });
-        }
-      }
-    } catch (error) {
-      console.log('Firebase initialization error:', error);
-    }
+    // Firebase is initialized by Flutter app, not here
+    // This prevents duplicate initialization and duplicate notifications
+    console.log('Firebase will be initialized by Flutter app');
 
     // Service Worker Registration  
     if ('serviceWorker' in navigator) {
