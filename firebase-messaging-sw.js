@@ -23,11 +23,16 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('Background message received:', payload);
 
+  // Generate a unique tag for this notification to prevent duplicates
+  const notificationTag = `ksain-${payload.data?.type || 'general'}-${Date.now()}`;
+  
   let notificationTitle = payload.notification?.title || 'ksain';
   let notificationOptions = {
     body: payload.notification?.body || '새로운 알림이 있습니다',
     icon: '/icons/Icon-192.png',
     badge: '/icons/badge-72x72.png',
+    tag: notificationTag, // Prevents duplicate notifications with same tag
+    renotify: false, // Don't vibrate/sound again if replacing existing notification
     data: payload.data || {},
     requireInteraction: true,
     actions: [
@@ -65,7 +70,21 @@ messaging.onBackgroundMessage((payload) => {
     }
   }
 
-  return self.registration.showNotification(notificationTitle, notificationOptions);
+  // Check if a notification with similar content was recently shown
+  return self.registration.getNotifications().then(notifications => {
+    // Close any existing notifications from ksain to prevent duplicates
+    const recentNotifications = notifications.filter(n => 
+      n.tag && n.tag.startsWith('ksain-') && 
+      (Date.now() - parseInt(n.tag.split('-').pop())) < 1000 // Within last second
+    );
+    
+    if (recentNotifications.length > 0) {
+      console.log('Duplicate notification prevented');
+      return; // Don't show duplicate
+    }
+    
+    return self.registration.showNotification(notificationTitle, notificationOptions);
+  });
 });
 
 // Handle notification clicks
