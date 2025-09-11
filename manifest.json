@@ -114,5 +114,6 @@
             "protocol": "web+ksain",
             "url": "/?protocol=%s"
         }
-    ]
+    ],
+    "gcm_sender_id": "1070324804834"
 }

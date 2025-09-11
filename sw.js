@@ -1,4 +1,4 @@
-// Service Worker for KSain PWA
+// Service Worker for ksain PWA
 const CACHE_NAME = 'ksain-v1';
 const CACHE_URLS = [
   '/',
@@ -68,7 +68,7 @@ self.addEventListener('push', (event) => {
   console.log('🔔 Push notification received:', event);
   
   let notificationData = {
-    title: 'KSain',
+    title: 'ksain',
     body: '새로운 알림이 있습니다',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-96x96.png',

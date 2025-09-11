@@ -23,7 +23,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('Background message received:', payload);
 
-  let notificationTitle = payload.notification?.title || 'KSain';
+  let notificationTitle = payload.notification?.title || 'ksain';
   let notificationOptions = {
     body: payload.notification?.body || '새로운 알림이 있습니다',
     icon: '/icons/Icon-192.png',
