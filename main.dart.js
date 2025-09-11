@@ -38859,7 +38859,7 @@ case 6:o=b
 s=o.c===B.mn?7:8
 break
 case 7:s=9
-return A.o(m.gSL().mt(null),$async$Pt)
+return A.o(m.gSL().mt("BJVEkNU3cuWzypgfL4Er8azPHHdjoPBQwARtWU9dkswQ0sTkaTO0FB2FJHmpmNAN5eIDl_Y8-neAWMyA9W_q_ZI"),$async$Pt)
 case 9:n=b
 s=n!=null?10:11
 break
@@ -65857,12 +65857,13 @@ $1(a){return B.c.jW(a,"messaging/","")},
 $S:19}
 A.aPw.prototype={
 mt(a){return this.aoG(a)},
-aoG(a){var s=0,r=A.y(t.N),q,p=2,o=[],n=this,m,l,k,j,i
+aoG(a){var s=0,r=A.y(t.N),q,p=2,o=[],n=this,m,l,k,j,i,h
 var $async$mt=A.u(function(b,c){if(b===1){o.push(c)
 s=p}while(true)switch(s){case 0:p=4
 k=v.G.firebase_messaging
+j=a==null?null:t.SF.a({vapidKey:a})
 s=7
-return A.o(A.fw(k.getToken(n.a,null),t.N),$async$mt)
+return A.o(A.fw(k.getToken(n.a,j),t.N),$async$mt)
 case 7:m=c
 q=m
 s=1
@@ -65871,12 +65872,12 @@ p=2
 s=6
 break
 case 4:p=3
-i=o.pop()
-l=A.aj(i)
+h=o.pop()
+l=A.aj(h)
 if(B.c.n(J.aq(l).toLowerCase(),"no active service worker")&&$.bEO){$.bEO=!1
 q=n.mt(a)
 s=1
-break}throw i
+break}throw h
 s=6
 break
 case 3:s=2
