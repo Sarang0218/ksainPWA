@@ -13,7 +13,7 @@
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ksain">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
@@ -32,7 +32,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = ""4179141444"";
+    const serviceWorkerVersion = ""2597774018"";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter_bootstrap.js" async></script>
@@ -129,15 +129,34 @@
       height: 100vh;
       height: 100dvh; /* Dynamic viewport height for mobile */
       overflow-x: hidden;
+      /* iOS safe area handling - extend to full screen */
+      padding-top: 0 !important;
+      padding-top: constant(safe-area-inset-top, 0) !important;
+      padding-top: env(safe-area-inset-top, 0) !important;
     }
 
-    /* Flutter app container fills full viewport */
+    /* Override safe area for PWA standalone mode */
+    @media all and (display-mode: standalone) {
+      html, body {
+        padding-top: 0 !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
+    /* Flutter app container fills full viewport including safe areas */
     #flutter_app, flt-glass-pane {
       width: 100% !important;
       height: 100% !important;
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
+      /* Ensure content extends to top in iOS PWA */
+      padding-top: 0 !important;
+      margin-top: 0 !important;
     }
 
     /* iOS Safari specific viewport handling */
