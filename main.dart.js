@@ -155053,7 +155053,7 @@ break
 case 6:case 1:return A.t(q,r)
 case 2:return A.r(o.at(-1),r)}})
 return A.u($async$nv,r)},
-I(a){var s,r,q,p,o,n,m,l,k,j=this,i=null,h="major",g=A.oq(i,B.ay,"assets/icons/setting.svg",!0,new A.bmA(),!0,A.ab(a,B.C,t.x).ah(0,"my_account"),i)
+I(a){var s,r,q,p,o,n,m,l,k,j=this,i=null,h="major",g=A.oq(i,B.ay,"assets/icons/setting.svg",!0,new A.bmA(),!1,A.ab(a,B.C,t.x).ah(0,"my_account"),i)
 if(j.r)s=B.kB
 else{s=j.w
 if(s!=null)s=A.bN(A.m("Error: "+s,i,i,i,i,i,B.Zk,i,i,i),i,i)
