@@ -63,68 +63,9 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Push event - handle push notifications
-self.addEventListener('push', (event) => {
-  console.log('🔔 Push notification received:', event);
-  
-  let notificationData = {
-    title: 'ksain',
-    body: '새로운 알림이 있습니다',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-96x96.png',
-    data: {}
-  };
-
-  if (event.data) {
-    try {
-      const data = event.data.json();
-      notificationData = {
-        title: data.title || notificationData.title,
-        body: data.body || notificationData.body,
-        icon: data.icon || notificationData.icon,
-        badge: data.badge || notificationData.badge,
-        data: data.data || {}
-      };
-      
-      // Add Korean notification styling
-      if (data.type === 'class') {
-        notificationData.title = '🎓 ' + notificationData.title;
-      } else if (data.type === 'meal') {
-        notificationData.title = '🍽️ ' + notificationData.title;
-      } else if (data.type === 'post') {
-        notificationData.title = '📝 ' + notificationData.title;
-      }
-      
-    } catch (error) {
-      console.error('❌ Error parsing push data:', error);
-    }
-  }
-
-  const options = {
-    body: notificationData.body,
-    icon: notificationData.icon,
-    badge: notificationData.badge,
-    data: notificationData.data,
-    requireInteraction: true,
-    actions: [
-      {
-        action: 'view',
-        title: '보기',
-        icon: '/icons/icon-96x96.png'
-      },
-      {
-        action: 'dismiss',
-        title: '닫기'
-      }
-    ],
-    vibrate: [200, 100, 200],
-    tag: notificationData.data.type || 'general'
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(notificationData.title, options)
-  );
-});
+// Push event is handled by firebase-messaging-sw.js
+// Removed duplicate push handler to prevent double notifications
+// Firebase Cloud Messaging handles all push notifications
 
 // Notification click event
 self.addEventListener('notificationclick', (event) => {
