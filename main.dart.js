@@ -37702,7 +37702,7 @@ case 5:p=f?"1":"0"
 o=t.N
 n=t.z
 s=7
-return A.p(A.e0("writePost.php",A.F(["boardId",a,"title",g,"content",c,"category",b,"engTitle",d,"sessionId",l,"isNotice",p],o,n),"POST",!0),$async$a04)
+return A.p(A.e0("write.php",A.F(["boardId",a,"title",g,"content",c,"category",b,"engTitle",d,"sessionId",l,"isNotice",p,"titleBold","0","allowComment","1"],o,n),"POST",!0),$async$a04)
 case 7:m=i
 p=J.am(m)
 if(J.e(p.h(m,"code"),200)){p=p.h(m,"data")
