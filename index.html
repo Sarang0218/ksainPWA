@@ -8,12 +8,12 @@
   -->
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="한국과학영재학교 가온누리 모바일 버전 (미리보기)">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="ksain">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
@@ -32,7 +32,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = ""795430316"";
+    const serviceWorkerVersion = ""3417835711"";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter_bootstrap.js" async></script>
@@ -121,101 +121,34 @@
       box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
     }
 
-    /* Full viewport PWA styles - AGGRESSIVE approach */
-    * {
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
+    /* Full viewport PWA styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh; /* Dynamic viewport height for mobile */
+      overflow-x: hidden;
     }
-    
-    html {
-      margin: 0 !important;
-      padding: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      position: fixed !important;
-      overflow: hidden !important;
-    }
-    
-    body {
-      margin: 0 !important;
-      padding: 0 !important;
+
+    /* Flutter app container fills full viewport */
+    #flutter_app, flt-glass-pane {
       width: 100% !important;
       height: 100% !important;
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      overflow: hidden !important;
-      -webkit-overflow-scrolling: touch !important;
-      overscroll-behavior: none !important;
     }
 
-    /* PWA standalone mode - extend into all safe areas */
-    @media all and (display-mode: standalone) {
-      html {
-        /* Use negative positioning to extend beyond safe area */
-        padding-top: 0 !important;
-        margin-top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-      }
-      
-      body {
-        /* Force content to start from absolute top */
-        padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px) !important;
-        padding-top: 0 !important;
-        margin-top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-        height: calc(100vh + env(safe-area-inset-top, 0px)) !important;
-        transform: translateY(calc(-1 * env(safe-area-inset-top, 0px))) !important;
-      }
-    }
-
-    /* Flutter canvas positioning */
-    flt-glass-pane {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      transform: none !important;
-    }
-    
-    /* iOS specific overrides */
+    /* iOS Safari specific viewport handling */
     @supports (-webkit-touch-callout: none) {
-      @media all and (display-mode: standalone) {
-        body {
-          /* iOS needs special handling */
-          position: fixed !important;
-          top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-          padding-top: env(safe-area-inset-top, 0px) !important;
-          height: calc(100vh + env(safe-area-inset-top, 0px)) !important;
-        }
-        
-        flt-glass-pane {
-          /* Push Flutter content up */
-          position: fixed !important;
-          top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-          height: calc(100vh + env(safe-area-inset-top, 0px)) !important;
-          padding-top: env(safe-area-inset-top, 0px) !important;
-        }
+      body {
+        /* Use CSS env() for safe areas but stretch into unsafe areas */
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 100vh;
+        height: -webkit-fill-available;
       }
-    }
-    
-    /* Force all Flutter content containers */
-    flt-glass-pane > *, 
-    flt-scene-host,
-    flt-scene,
-    flt-semantics-placeholder {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
     }
   </style>
 </head>
@@ -286,47 +219,6 @@
     window.addEventListener('flutter-first-frame', () => {
       console.log('Flutter first frame rendered');
       document.body.classList.add('flutter-loaded');
-      
-      // Force iOS PWA to use full screen
-      if (window.navigator.standalone === true) {
-        console.log('Running in iOS PWA mode - forcing full screen');
-        
-        // Find Flutter container and force it to top
-        const flutterContainer = document.querySelector('flt-glass-pane');
-        if (flutterContainer) {
-          // Get safe area inset
-          const styles = getComputedStyle(document.documentElement);
-          const safeAreaTop = styles.getPropertyValue('env(safe-area-inset-top)') || '0px';
-          console.log('Safe area top:', safeAreaTop);
-          
-          // Override positioning with inline styles (highest priority)
-          flutterContainer.style.cssText = `
-            position: fixed !important;
-            top: 0px !important;
-            left: 0px !important;
-            right: 0px !important;
-            bottom: 0px !important;
-            width: 100% !important;
-            height: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            transform: translateY(-${safeAreaTop}) !important;
-          `;
-          
-          // Also adjust body
-          document.body.style.cssText = `
-            position: fixed !important;
-            top: -${safeAreaTop} !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            width: 100% !important;
-            height: calc(100vh + ${safeAreaTop}) !important;
-            padding: 0 !important;
-            margin: 0 !important;
-          `;
-        }
-      }
     });
 
     // Add error logging
@@ -350,48 +242,6 @@
       console.log('Final fallback: removing loading screen');
       document.body.classList.add('flutter-loaded');
     }, 5000);
-    
-    // iOS PWA Full Screen Helper with MutationObserver
-    function forceIOSFullScreen() {
-      if (window.navigator.standalone !== true) return;
-      
-      const applyFullScreenStyles = () => {
-        const flutterContainer = document.querySelector('flt-glass-pane');
-        if (flutterContainer && !flutterContainer.dataset.fullscreenApplied) {
-          flutterContainer.dataset.fullscreenApplied = 'true';
-          flutterContainer.style.setProperty('position', 'fixed', 'important');
-          flutterContainer.style.setProperty('top', '0', 'important');
-          flutterContainer.style.setProperty('left', '0', 'important');
-          flutterContainer.style.setProperty('right', '0', 'important');
-          flutterContainer.style.setProperty('bottom', '0', 'important');
-          flutterContainer.style.setProperty('transform', 'translateY(-20px)', 'important'); // 20px is typical iOS status bar
-          flutterContainer.style.setProperty('height', 'calc(100vh + 20px)', 'important');
-        }
-      };
-      
-      // Apply immediately if possible
-      applyFullScreenStyles();
-      
-      // Watch for Flutter container creation
-      const observer = new MutationObserver((mutations) => {
-        applyFullScreenStyles();
-      });
-      
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-      
-      // Apply styles periodically as fallback
-      setInterval(applyFullScreenStyles, 1000);
-    }
-    
-    // Initialize iOS full screen on load
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', forceIOSFullScreen);
-    } else {
-      forceIOSFullScreen();
-    }
   </script>
 </body>
 </html>
