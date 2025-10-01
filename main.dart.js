@@ -39387,7 +39387,7 @@ aGv(a,b,c){return A.bYU(a,b,c)},
 bYU(a,b,c){var s=0,r=A.u(t.nA),q,p=2,o=[],n,m,l,k,j,i,h,g,f,e
 var $async$aGv=A.p(function(d,a0){if(d===1){o.push(a0)
 s=p}while(true)switch(s){case 0:p=4
-n=A.e_("http://15.164.255.8:5001/search?query="+A.lf(2,a,B.az,!1)+"&limit="+c,0,null)
+n=A.e_("https://api.ksain.net/v1/mobile/fastSearch.php?query="+A.lf(2,a,B.az,!1)+"&limit="+c,0,null)
 s=7
 return A.n(A.cbU(n).Cr(0,B.abm),$async$aGv)
 case 7:m=a0
